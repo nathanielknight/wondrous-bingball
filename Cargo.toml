@@ -1,0 +1,7 @@
+[package]
+name = "wondrous-bingball"
+version = "0.1.0"
+authors = ["Nathaniel Knight <nknight@cfenet.ubc.ca>"]
+
+[dependencies]
+ggez="0.4.2"
