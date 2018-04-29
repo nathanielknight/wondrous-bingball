@@ -37,6 +37,7 @@ impl event::EventHandler for MainState {
 
     fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
         graphics::clear(ctx);
+        graphics::set_background_color(ctx, graphics::BLACK);
         self.ball.draw(ctx)?;
         self.player_paddle.draw(ctx)?;
         graphics::present(ctx);
@@ -55,6 +56,12 @@ impl event::EventHandler for MainState {
 pub fn main() {
     let c = conf::Conf::new();
     let ctx = &mut Context::load_from_conf("wondrous_bingball", "ggez", c).unwrap();
+    graphics::set_resolution(ctx, game::FIELD_WIDTH as u32, game::FIELD_HEIGHT as u32).unwrap();
+    graphics::set_fullscreen(ctx, true).unwrap();
+    graphics::set_screen_coordinates(
+        ctx,
+        graphics::Rect::new(0.0, 0.0, game::FIELD_WIDTH, game::FIELD_HEIGHT),
+    ).unwrap();
     let state = &mut MainState::new(ctx).unwrap();
     event::run(ctx, state).unwrap();
 }
