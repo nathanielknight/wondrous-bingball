@@ -54,7 +54,7 @@ impl event::EventHandler for MainState {
 
 pub fn main() {
     let c = conf::Conf::new();
-    let ctx = &mut Context::load_from_conf("super_simple", "ggez", c).unwrap();
+    let ctx = &mut Context::load_from_conf("wondrous_bingball", "ggez", c).unwrap();
     let state = &mut MainState::new(ctx).unwrap();
     event::run(ctx, state).unwrap();
 }
