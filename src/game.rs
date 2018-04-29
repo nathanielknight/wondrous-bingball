@@ -23,10 +23,9 @@ pub struct Ball {
 }
 
 impl Ball {
-    pub fn update(&mut self) -> ggez::GameResult<()> {
+    pub fn update(&mut self) {
         self.rect.x += self.velocity.x;
         self.rect.y += self.velocity.y;
-        Ok(())
     }
 
     pub fn new(x: f32, y: f32, v: Point2) -> Ball {
@@ -55,7 +54,7 @@ pub struct Paddle {
 }
 
 const PADDLE_SPEED: f32 = 3.0;
-const PADDLE_WIDTH: f32 = 20.0;
+pub const PADDLE_WIDTH: f32 = 20.0;
 const PADDLE_HEIGHT: f32 = 80.0;
 const PADDLE_BUFFER: f32 = 3.0;
 
@@ -89,4 +88,40 @@ impl Paddle {
         ggez::graphics::rectangle(ctx, ggez::graphics::DrawMode::Fill, self.rect)?;
         Ok(())
     }
+}
+
+
+pub struct ComputerPaddle {
+    paddle: Paddle,
+}
+
+impl ComputerPaddle {
+
+    pub fn update(&mut self, b: &Ball) {
+        let x = self.paddle.rect.x;
+        const LIMIT: f32 = FIELD_WIDTH * 0.75;
+        if x - b.rect.x > LIMIT {
+            return
+        }
+        let pos = self.paddle.rect.y + self.paddle.rect.h * 0.5;
+        let ball_pos = b.rect.y + b.rect.h * 0.5;
+        let ind = pos - ball_pos; // negative if ball is below self
+        if ind < 5.0 {
+            self.paddle.move_down();
+        }
+        if ind > 5.0 {
+            self.paddle.move_up();
+        }
+    }
+
+    pub fn draw(&self, ctx: &mut ggez::Context) -> ggez::GameResult<()> {
+        ggez::graphics::rectangle(ctx, ggez::graphics::DrawMode::Fill, self.paddle.rect)?;
+        Ok(())
+    }
+
+    pub fn new(x: f32, y: f32) -> Self {
+        let p = Paddle::new(x, y);
+        Self{ paddle: p }
+    }
+
 }

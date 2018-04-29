@@ -1,5 +1,3 @@
-//! The simplest possible example that does something.
-
 extern crate ggez;
 
 use ggez::{Context, GameResult};
@@ -14,6 +12,7 @@ mod util;
 struct MainState {
     ball: game::Ball,
     player_paddle: game::Paddle,
+    computer_paddle: game::ComputerPaddle,
     control: controls::ControlState,
 }
 
@@ -22,6 +21,7 @@ impl MainState {
         let s = MainState {
             ball: game::Ball::new(0.0, 0.0, Point2::new(1.0, 1.0)),
             player_paddle: game::Paddle::new(10.0, 250.0),
+            computer_paddle: game::ComputerPaddle::new(game::FIELD_WIDTH - 10.0 - game::PADDLE_WIDTH, 250.0),
             control: controls::ControlState::new(),
         };
         Ok(s)
@@ -30,9 +30,10 @@ impl MainState {
 
 impl event::EventHandler for MainState {
     fn update(&mut self, _ctx: &mut Context) -> GameResult<()> {
-        self.ball.update()?;
+        self.ball.update();
         let cmd = self.control.move_state();
         self.player_paddle.update(cmd);
+        self.computer_paddle.update(&self.ball);
         Ok(())
     }
 
@@ -41,6 +42,7 @@ impl event::EventHandler for MainState {
         graphics::set_background_color(ctx, graphics::BLACK);
         self.ball.draw(ctx)?;
         self.player_paddle.draw(ctx)?;
+        self.computer_paddle.draw(ctx)?;
         graphics::present(ctx);
         Ok(())
     }
