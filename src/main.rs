@@ -9,6 +9,7 @@ use ggez::event;
 
 mod controls;
 mod game;
+mod util;
 
 struct MainState {
     ball: game::Ball,
@@ -56,11 +57,9 @@ impl event::EventHandler for MainState {
 pub fn main() {
     let c = conf::Conf::new();
     let ctx = &mut Context::load_from_conf("wondrous_bingball", "ggez", c).unwrap();
-    graphics::set_resolution(ctx, game::FIELD_WIDTH as u32, game::FIELD_HEIGHT as u32).unwrap();
-    graphics::set_fullscreen(ctx, true).unwrap();
-    graphics::set_screen_coordinates(
+    util::setup_graphics(
         ctx,
-        graphics::Rect::new(0.0, 0.0, game::FIELD_WIDTH, game::FIELD_HEIGHT),
+        &util::GraphicsOptions{width: game::FIELD_WIDTH, height: game::FIELD_HEIGHT},
     ).unwrap();
     let state = &mut MainState::new(ctx).unwrap();
     event::run(ctx, state).unwrap();
