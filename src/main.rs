@@ -46,6 +46,7 @@ impl event::EventHandler for MainState {
         self.ball.draw(ctx)?;
         self.player_paddle.draw(ctx)?;
         self.computer_paddle.draw(ctx)?;
+        util::draw_centreline(ctx)?;
         graphics::present(ctx);
         Ok(())
     }
