@@ -1,4 +1,4 @@
-use ggez::event::{Keycode};
+use ggez::event::Keycode;
 
 struct InputState {
     up_pressed: bool,
@@ -15,10 +15,9 @@ pub struct ControlState {
     input: InputState,
 }
 
-
 impl ControlState {
     pub fn new() -> ControlState {
-        ControlState{
+        ControlState {
             input: InputState {
                 up_pressed: false,
                 down_pressed: false,

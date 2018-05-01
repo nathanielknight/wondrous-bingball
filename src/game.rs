@@ -27,7 +27,7 @@ impl Ball {
         self.rect.x += self.velocity.x;
         self.rect.y += self.velocity.y;
 
-        if self.rect.y < 0.0  || self.rect.y > FIELD_HEIGHT {
+        if self.rect.y < 0.0 || self.rect.y > FIELD_HEIGHT {
             self.velocity.y *= -1.0;
             self.rect.y = clamp(self.rect.y, 0.0, FIELD_HEIGHT);
         }
@@ -47,10 +47,8 @@ impl Ball {
         let c_oth = r.y + r.h * 0.5;
         let dy = c_slf - c_oth;
         let theta = std::f32::consts::PI / 4.0 * dy / r.h;
-        let speed = (
-            self.velocity.x*self.velocity.x
-            + self.velocity.y*self.velocity.y
-        ).sqrt() * 1.1;
+        let speed =
+            (self.velocity.x * self.velocity.x + self.velocity.y * self.velocity.y).sqrt() * 1.1;
         // set velocity direction
         self.velocity.x = -1.0 * self.velocity.x.signum() * theta.cos();
         self.velocity.y = theta.sin();
@@ -79,7 +77,6 @@ impl Ball {
     }
 }
 
-
 pub struct Paddle {
     rect: Rect,
 }
@@ -89,22 +86,33 @@ pub const PADDLE_WIDTH: f32 = 20.0;
 const PADDLE_HEIGHT: f32 = 80.0;
 const PADDLE_BUFFER: f32 = 3.0;
 
-
 impl Paddle {
-
     pub fn new(x: f32, y: f32) -> Paddle {
-        let r: Rect = Rect {x: x, y: y, w: PADDLE_WIDTH, h: PADDLE_HEIGHT};
+        let r: Rect = Rect {
+            x: x,
+            y: y,
+            w: PADDLE_WIDTH,
+            h: PADDLE_HEIGHT,
+        };
         Paddle { rect: r }
     }
 
     fn move_up(&mut self) {
         self.rect.y -= PADDLE_SPEED;
-        self.rect.y = clamp(self.rect.y, PADDLE_BUFFER, FIELD_HEIGHT as f32 - PADDLE_BUFFER - self.rect.h);
+        self.rect.y = clamp(
+            self.rect.y,
+            PADDLE_BUFFER,
+            FIELD_HEIGHT as f32 - PADDLE_BUFFER - self.rect.h,
+        );
     }
 
     fn move_down(&mut self) {
         self.rect.y += PADDLE_SPEED;
-        self.rect.y = clamp(self.rect.y, PADDLE_BUFFER, FIELD_HEIGHT as f32 - PADDLE_BUFFER - self.rect.h);
+        self.rect.y = clamp(
+            self.rect.y,
+            PADDLE_BUFFER,
+            FIELD_HEIGHT as f32 - PADDLE_BUFFER - self.rect.h,
+        );
     }
 
     pub fn update(&mut self, cmd: MoveState) {
@@ -121,18 +129,16 @@ impl Paddle {
     }
 }
 
-
 pub struct ComputerPaddle {
     paddle: Paddle,
 }
 
 impl ComputerPaddle {
-
     pub fn update(&mut self, b: &Ball) {
         let x = self.paddle.rect.x;
         const LIMIT: f32 = FIELD_WIDTH * 0.75;
         if x - b.rect.x > LIMIT {
-            return
+            return;
         }
         let pos = self.paddle.rect.y + self.paddle.rect.h * 0.5;
         let ball_pos = b.rect.y + b.rect.h * 0.5;
@@ -152,7 +158,6 @@ impl ComputerPaddle {
 
     pub fn new(x: f32, y: f32) -> Self {
         let p = Paddle::new(x, y);
-        Self{ paddle: p }
+        Self { paddle: p }
     }
-
 }
