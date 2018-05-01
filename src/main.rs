@@ -30,7 +30,7 @@ impl MainState {
 
 impl event::EventHandler for MainState {
     fn update(&mut self, _ctx: &mut Context) -> GameResult<()> {
-        self.ball.update();
+        self.ball.update(&self.player_paddle, &self.computer_paddle);
         let cmd = self.control.move_state();
         self.player_paddle.update(cmd);
         self.computer_paddle.update(&self.ball);

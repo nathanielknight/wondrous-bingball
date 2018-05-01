@@ -1,7 +1,7 @@
 extern crate ggez;
 
+use std;
 use ggez::graphics::{Point2, Rect};
-
 use controls::MoveState;
 
 pub const FIELD_WIDTH: f32 = 700.0;
@@ -23,9 +23,40 @@ pub struct Ball {
 }
 
 impl Ball {
-    pub fn update(&mut self) {
+    pub fn update(&mut self, player: &Paddle, computer: &ComputerPaddle) {
         self.rect.x += self.velocity.x;
         self.rect.y += self.velocity.y;
+
+        if self.rect.y < 0.0  || self.rect.y > FIELD_HEIGHT {
+            self.velocity.y *= -1.0;
+            self.rect.y = clamp(self.rect.y, 0.0, FIELD_HEIGHT);
+        }
+
+        if self.rect.overlaps(&player.rect) {
+            self.bounce_off(&player.rect);
+        }
+        if self.rect.overlaps(&computer.paddle.rect) {
+            self.bounce_off(&computer.paddle.rect);
+        }
+    }
+
+    // Reverse x direction, set y based on
+    fn bounce_off(&mut self, r: &Rect) {
+        println!("Bouncing: v = {:?}", self.velocity);
+        let c_slf = self.rect.y + self.rect.h * 0.5;
+        let c_oth = r.y + r.h * 0.5;
+        let dy = c_slf - c_oth;
+        let theta = std::f32::consts::PI / 4.0 * dy / r.h;
+        let speed = (
+            self.velocity.x*self.velocity.x
+            + self.velocity.y*self.velocity.y
+        ).sqrt() * 1.1;
+        // set velocity direction
+        self.velocity.x = -1.0 * self.velocity.x.signum() * theta.cos();
+        self.velocity.y = theta.sin();
+        // set velocity magnitude
+        self.velocity *= speed;
+        println!("bounced: v = {:?}", self.velocity);
     }
 
     pub fn new(x: f32, y: f32, v: Point2) -> Ball {
