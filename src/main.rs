@@ -1,7 +1,7 @@
 extern crate ggez;
 
 use ggez::{Context, GameResult};
-use ggez::graphics::{self, Point2};
+use ggez::graphics;
 use ggez::conf;
 use ggez::event;
 
@@ -10,42 +10,37 @@ mod game;
 mod util;
 
 struct MainState {
-    ball: game::Ball,
-    player_paddle: game::Paddle,
-    computer_paddle: game::ComputerPaddle,
+    game: game::Game,
     control: controls::ControlState,
 }
 
 impl MainState {
     fn new(_ctx: &mut Context) -> GameResult<MainState> {
-        let s = MainState {
-            ball: game::Ball::new(0.0, 0.0, Point2::new(1.0, 1.0)),
-            player_paddle: game::Paddle::new(10.0, 250.0),
-            computer_paddle: game::ComputerPaddle::new(
-                game::FIELD_WIDTH - 10.0 - game::PADDLE_WIDTH,
-                250.0,
-            ),
-            control: controls::ControlState::new(),
-        };
+        let s = MainState::default();
         Ok(s)
+    }
+}
+
+impl Default for MainState {
+    fn default() -> Self {
+        MainState {
+            game: game::Game::default(),
+            control: controls::ControlState::new(),
+        }
     }
 }
 
 impl event::EventHandler for MainState {
     fn update(&mut self, _ctx: &mut Context) -> GameResult<()> {
-        self.ball.update(&self.player_paddle, &self.computer_paddle);
         let cmd = self.control.move_state();
-        self.player_paddle.update(cmd);
-        self.computer_paddle.update(&self.ball);
+        self.game.update(cmd);
         Ok(())
     }
 
     fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
         graphics::clear(ctx);
-        self.ball.draw(ctx)?;
-        self.player_paddle.draw(ctx)?;
-        self.computer_paddle.draw(ctx)?;
         util::draw_centreline(ctx)?;
+        self.game.draw(ctx)?;
         graphics::present(ctx);
         Ok(())
     }

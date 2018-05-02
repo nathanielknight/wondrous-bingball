@@ -1,6 +1,7 @@
 extern crate ggez;
 
 use std;
+use ggez::{Context, GameResult};
 use ggez::graphics::{Point2, Rect};
 use controls::MoveState;
 
@@ -17,13 +18,13 @@ fn clamp(x: f32, low: f32, high: f32) -> f32 {
     }
 }
 
-pub struct Ball {
+struct Ball {
     rect: Rect,
     velocity: Point2,
 }
 
 impl Ball {
-    pub fn update(&mut self, player: &Paddle, computer: &ComputerPaddle) {
+    fn update(&mut self, player: &Paddle, computer: &ComputerPaddle) {
         self.rect.x += self.velocity.x;
         self.rect.y += self.velocity.y;
 
@@ -57,7 +58,7 @@ impl Ball {
         println!("bounced: v = {:?}", self.velocity);
     }
 
-    pub fn new(x: f32, y: f32, v: Point2) -> Ball {
+    fn new(x: f32, y: f32, v: Point2) -> Ball {
         const SIZE: f32 = 10.0;
         let r = Rect {
             x: x,
@@ -71,7 +72,7 @@ impl Ball {
         }
     }
 
-    pub fn draw(&self, ctx: &mut ggez::Context) -> ggez::GameResult<()> {
+    fn draw(&self, ctx: &mut ggez::Context) -> ggez::GameResult<()> {
         ggez::graphics::rectangle(ctx, ggez::graphics::DrawMode::Fill, self.rect)?;
         Ok(())
     }
@@ -134,7 +135,7 @@ pub struct ComputerPaddle {
 }
 
 impl ComputerPaddle {
-    pub fn update(&mut self, b: &Ball) {
+    fn update(&mut self, b: &Ball) {
         let x = self.paddle.rect.x;
         const LIMIT: f32 = FIELD_WIDTH * 0.75;
         if x - b.rect.x > LIMIT {
@@ -151,13 +152,44 @@ impl ComputerPaddle {
         }
     }
 
-    pub fn draw(&self, ctx: &mut ggez::Context) -> ggez::GameResult<()> {
+    fn draw(&self, ctx: &mut ggez::Context) -> ggez::GameResult<()> {
         ggez::graphics::rectangle(ctx, ggez::graphics::DrawMode::Fill, self.paddle.rect)?;
         Ok(())
     }
 
-    pub fn new(x: f32, y: f32) -> Self {
+    fn new(x: f32, y: f32) -> Self {
         let p = Paddle::new(x, y);
         Self { paddle: p }
+    }
+}
+
+pub struct Game {
+    ball: Ball,
+    player: Paddle,
+    computer: ComputerPaddle,
+}
+
+impl Default for Game {
+    fn default() -> Self {
+        Game {
+            ball: Ball::new(0.0, 0.0, Point2::new(1.0, 1.0)),
+            player: Paddle::new(10.0, 250.0),
+            computer: ComputerPaddle::new(FIELD_WIDTH - 10.0 - PADDLE_WIDTH, 250.0),
+        }
+    }
+}
+
+impl Game {
+    pub fn update(&mut self, cmd: MoveState) {
+        self.ball.update(&self.player, &self.computer);
+        self.player.update(cmd);
+        self.computer.update(&self.ball);
+    }
+
+    pub fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
+        self.ball.draw(ctx)?;
+        self.player.draw(ctx)?;
+        self.computer.draw(ctx)?;
+        Ok(())
     }
 }
