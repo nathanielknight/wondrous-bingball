@@ -179,6 +179,16 @@ impl Default for Game {
     }
 }
 
+pub enum Belligerent {
+    Player,
+    Computer,
+}
+
+pub enum Status {
+    Ongoing,
+    Over(Belligerent),
+}
+
 impl Game {
     pub fn update(&mut self, cmd: MoveState) {
         self.ball.update(&self.player, &self.computer);
@@ -191,5 +201,15 @@ impl Game {
         self.player.draw(ctx)?;
         self.computer.draw(ctx)?;
         Ok(())
+    }
+
+    pub fn status(&self) -> Status {
+        if self.ball.rect.x < 0.0 {
+            return Status::Over(Belligerent::Computer);
+        } else if self.ball.rect.x > FIELD_WIDTH {
+            return Status::Over(Belligerent::Player);
+        } else {
+            return Status::Ongoing;
+        }
     }
 }
