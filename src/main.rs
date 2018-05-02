@@ -42,7 +42,6 @@ impl event::EventHandler for MainState {
 
     fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
         graphics::clear(ctx);
-        graphics::set_background_color(ctx, graphics::BLACK);
         self.ball.draw(ctx)?;
         self.player_paddle.draw(ctx)?;
         self.computer_paddle.draw(ctx)?;
