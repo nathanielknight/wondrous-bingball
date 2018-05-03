@@ -12,6 +12,8 @@ mod util;
 struct MainState {
     game: game::Game,
     control: controls::ControlState,
+    player_score: u32,
+    computer_score: u32,
 }
 
 impl MainState {
@@ -26,6 +28,8 @@ impl Default for MainState {
         MainState {
             game: game::Game::default(),
             control: controls::ControlState::new(),
+            player_score: 0,
+            computer_score: 0,
         }
     }
 }
@@ -40,6 +44,7 @@ impl event::EventHandler for MainState {
     fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
         graphics::clear(ctx);
         util::draw_centreline(ctx)?;
+        util::draw_score(ctx, self.player_score, self.computer_score)?;
         self.game.draw(ctx)?;
         graphics::present(ctx);
         Ok(())

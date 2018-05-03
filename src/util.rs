@@ -25,3 +25,22 @@ pub fn draw_centreline(ctx: &mut Context) -> GameResult<()> {
     graphics::line(ctx, &cl_points, LINE_WIDTH)?;
     Ok(())
 }
+
+pub fn draw_score(ctx: &mut Context, player: u32, computer: u32) -> GameResult<()> {
+    let fnt = graphics::Font::default_font()?;
+
+    let player_str = player.to_string();
+    let player_text = graphics::Text::new(ctx, &player_str, &fnt)?;
+    let player_point = graphics::Point2::new(
+        game::FIELD_WIDTH * 0.5 - 100.0 - player_text.width() as f32,
+        100.0,
+    );
+    graphics::draw(ctx, &player_text, player_point, 0.0)?;
+
+    let computer_str = computer.to_string();
+    let computer_text = graphics::Text::new(ctx, &computer_str, &fnt)?;
+    let computer_point = graphics::Point2::new(game::FIELD_WIDTH * 0.5 + 100.0, 100.0);
+    graphics::draw(ctx, &computer_text, computer_point, 0.0)?;
+
+    Ok(())
+}
