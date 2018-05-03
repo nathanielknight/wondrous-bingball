@@ -1,4 +1,5 @@
 extern crate ggez;
+extern crate rand;
 
 use std;
 use ggez::{Context, GameResult};
@@ -76,6 +77,15 @@ impl Ball {
     fn draw(&self, ctx: &mut ggez::Context) -> ggez::GameResult<()> {
         ggez::graphics::rectangle(ctx, ggez::graphics::DrawMode::Fill, self.rect)?;
         Ok(())
+    }
+
+    fn init_random_velocity(&mut self) {
+        const MAX_SPEED: f32 = 2.0;
+        let x_rand = 0.5 + 0.5 * rand::random::<f32>();
+        let y_rand = 0.25 + 0.75 * rand::random::<f32>();
+
+        let new_velocity = Point2::new(x_rand, y_rand);
+        self.velocity = new_velocity * MAX_SPEED;
     }
 }
 
@@ -216,6 +226,6 @@ impl Game {
 
     pub fn reset(&mut self) {
         self.ball.rect.move_to(Point2::new(1.0, 1.0));
-        self.ball.velocity = Point2::new(2.0, 2.0);
+        self.ball.init_random_velocity();
     }
 }

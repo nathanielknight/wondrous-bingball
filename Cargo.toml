@@ -5,3 +5,4 @@ authors = ["Nathaniel Knight <nathaniel.ep@gmail.com>"]
 
 [dependencies]
 ggez="0.4.2"
+rand="0.4.2"
