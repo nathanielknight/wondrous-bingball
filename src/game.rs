@@ -27,15 +27,15 @@ impl Default for Ball {
     fn default() -> Self {
         const SIZE: f32 = 10.0;
         let pos = Rect {
-            x: 1.0
+            x: 1.0,
             y: 1.0,
             w: SIZE,
             h: SIZE,
         };
         let vel = Point2::new(2.0, 2.0);
         Ball {
-            rect: r,
-            velocity: v,
+            rect: pos,
+            velocity: vel,
         }
     }
 }
