@@ -23,6 +23,23 @@ struct Ball {
     velocity: Point2,
 }
 
+impl Default for Ball {
+    fn default() -> Self {
+        const SIZE: f32 = 10.0;
+        let pos = Rect {
+            x: 1.0
+            y: 1.0,
+            w: SIZE,
+            h: SIZE,
+        };
+        let vel = Point2::new(2.0, 2.0);
+        Ball {
+            rect: r,
+            velocity: v,
+        }
+    }
+}
+
 impl Ball {
     fn update(&mut self, player: &Paddle, computer: &ComputerPaddle) {
         self.rect.x += self.velocity.x;
@@ -56,20 +73,6 @@ impl Ball {
         // set velocity magnitude
         self.velocity *= speed;
         println!("bounced: v = {:?}", self.velocity);
-    }
-
-    fn new(x: f32, y: f32, v: Point2) -> Ball {
-        const SIZE: f32 = 10.0;
-        let r = Rect {
-            x: x,
-            y: y,
-            w: SIZE,
-            h: SIZE,
-        };
-        Ball {
-            rect: r,
-            velocity: v,
-        }
     }
 
     fn draw(&self, ctx: &mut ggez::Context) -> ggez::GameResult<()> {
@@ -172,7 +175,7 @@ pub struct Game {
 impl Default for Game {
     fn default() -> Self {
         Game {
-            ball: Ball::new(0.0, 0.0, Point2::new(1.0, 1.0)),
+            ball: Ball::default(),
             player: Paddle::new(10.0, 250.0),
             computer: ComputerPaddle::new(FIELD_WIDTH - 10.0 - PADDLE_WIDTH, 250.0),
         }
