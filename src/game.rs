@@ -212,4 +212,9 @@ impl Game {
             return Status::Ongoing;
         }
     }
+
+    pub fn reset(&mut self) {
+        self.ball.rect.move_to(Point2::new(1.0, 1.0));
+        self.ball.velocity = Point2::new(2.0, 2.0);
+    }
 }

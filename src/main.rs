@@ -38,6 +38,17 @@ impl event::EventHandler for MainState {
     fn update(&mut self, _ctx: &mut Context) -> GameResult<()> {
         let cmd = self.control.move_state();
         self.game.update(cmd);
+        match self.game.status() {
+            game::Status::Ongoing => (),
+            game::Status::Over(game::Belligerent::Player) => {
+                self.player_score += 1;
+                self.game.reset();
+            }
+            game::Status::Over(game::Belligerent::Computer) => {
+                self.computer_score += 1;
+                self.game.reset();
+            }
+        }
         Ok(())
     }
 
