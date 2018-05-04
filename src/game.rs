@@ -60,7 +60,6 @@ impl Ball {
 
     // Reverse x direction, set y based on
     fn bounce_off(&mut self, r: &Rect) {
-        println!("Bouncing: v = {:?}", self.velocity);
         let c_slf = self.rect.y + self.rect.h * 0.5;
         let c_oth = r.y + r.h * 0.5;
         let dy = c_slf - c_oth;
@@ -72,7 +71,6 @@ impl Ball {
         self.velocity.y = theta.sin();
         // set velocity magnitude
         self.velocity *= speed;
-        println!("bounced: v = {:?}", self.velocity);
     }
 
     fn draw(&self, ctx: &mut ggez::Context) -> ggez::GameResult<()> {
