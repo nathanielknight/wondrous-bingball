@@ -137,18 +137,19 @@ pub struct ComputerPaddle {
 
 impl ComputerPaddle {
     fn update(&mut self, b: &Ball) {
-        let x = self.paddle.rect.x;
         const LIMIT: f32 = FIELD_WIDTH * 0.75;
+        let x = self.paddle.rect.x;
         if x - b.rect.x > LIMIT {
             return;
         }
         let pos = self.paddle.rect.y + self.paddle.rect.h * 0.5;
         let ball_pos = b.rect.y + b.rect.h * 0.5;
         let ind = pos - ball_pos; // negative if ball is below self
-        if ind < 5.0 {
+        const BUFFER: f32 = 16.0;
+        if ind < -1.0 * BUFFER {
             self.paddle.move_down();
         }
-        if ind > 5.0 {
+        if ind > BUFFER {
             self.paddle.move_up();
         }
     }
