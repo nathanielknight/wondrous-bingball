@@ -67,11 +67,17 @@ impl Ball {
         let theta = std::f32::consts::PI / 4.0 * dy / r.h;
         let speed =
             (self.velocity.x * self.velocity.x + self.velocity.y * self.velocity.y).sqrt() * 1.1;
-        // set velocity direction
+        // Set velocity direction
         self.velocity.x = -1.0 * self.velocity.x.signum() * theta.cos();
         self.velocity.y = theta.sin();
-        // set velocity magnitude
+        // Set velocity magnitude
         self.velocity *= speed;
+        // Set position just outside paddle (to avoid multple bounces)
+        if self.velocity.x > 0.0 {
+            self.rect.x = r.right() + 1.0;
+        } else {
+            self.rect.x = r.left() - 1.0 - r.w;
+        }
     }
 
     fn draw(&self, ctx: &mut ggez::Context) -> ggez::GameResult<()> {
