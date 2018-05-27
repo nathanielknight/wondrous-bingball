@@ -5,6 +5,7 @@ use ggez::graphics;
 use ggez::conf;
 use ggez::event;
 
+mod audio;
 mod controls;
 mod game;
 mod util;
