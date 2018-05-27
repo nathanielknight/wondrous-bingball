@@ -15,30 +15,28 @@ struct MainState {
     control: controls::ControlState,
     player_score: u32,
     computer_score: u32,
+    audio_system: audio::AudioSystem,
 }
 
 impl MainState {
     fn new(_ctx: &mut Context) -> GameResult<MainState> {
-        let s = MainState::default();
-        Ok(s)
-    }
-}
-
-impl Default for MainState {
-    fn default() -> Self {
-        MainState {
+        let audio_system = audio::AudioSystem::create(_ctx)?;
+        let s = MainState {
             game: game::Game::default(),
             control: controls::ControlState::new(),
             player_score: 0,
             computer_score: 0,
-        }
+            audio_system: audio_system,
+        };
+        Ok(s)
     }
 }
 
 impl event::EventHandler for MainState {
     fn update(&mut self, _ctx: &mut Context) -> GameResult<()> {
         let cmd = self.control.move_state();
-        self.game.update(cmd);
+        let audio_cmd = self.game.update(cmd);
+        self.audio_system.handle_cmd(audio_cmd)?;
         match self.game.status() {
             game::Status::Ongoing => (),
             game::Status::Over(game::Belligerent::Player) => {
@@ -85,14 +83,14 @@ impl event::EventHandler for MainState {
 
 pub fn main() {
     let c = conf::Conf::new();
-    let ctx = &mut Context::load_from_conf("wondrous_bingball", "ggez", c).unwrap();
+    let ctx = &mut Context::load_from_conf("wondrous_bingball", "ggez", c).expect("error creating context");
     util::setup_graphics(
         ctx,
         &util::GraphicsOptions {
             width: game::FIELD_WIDTH,
             height: game::FIELD_HEIGHT,
         },
-    ).unwrap();
-    let state = &mut MainState::new(ctx).unwrap();
-    event::run(ctx, state).unwrap();
+    ).expect("error setting up graphics");
+    let state = &mut MainState::new(ctx).expect("error creating main state");
+    event::run(ctx, state).expect("error running game");
 }

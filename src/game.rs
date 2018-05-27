@@ -6,6 +6,8 @@ use ggez::{Context, GameResult};
 use ggez::graphics::{Point2, Rect};
 use controls::MoveState;
 
+use audio::AudioCmd;
+
 pub const FIELD_WIDTH: f32 = 700.0;
 pub const FIELD_HEIGHT: f32 = 500.0;
 
@@ -42,20 +44,28 @@ impl Default for Ball {
 }
 
 impl Ball {
-    fn update(&mut self, player: &Paddle, computer: &ComputerPaddle) {
+    fn update(&mut self, player: &Paddle, computer: &ComputerPaddle) -> AudioCmd {
         self.rect.x += self.velocity.x;
         self.rect.y += self.velocity.y;
 
         if self.rect.y < 0.0 || self.rect.y > FIELD_HEIGHT {
             self.velocity.y *= -1.0;
             self.rect.y = clamp(self.rect.y, 0.0, FIELD_HEIGHT);
+            return AudioCmd::PlayBounce
         }
 
         if self.rect.overlaps(&player.rect) {
             self.bounce_off(&player.rect);
+            return AudioCmd::PlayBounce
         }
         if self.rect.overlaps(&computer.paddle.rect) {
             self.bounce_off(&computer.paddle.rect);
+            return AudioCmd::PlayBounce
+        }
+        if self.out_of_bounds() {
+            AudioCmd::PlayOver
+        } else {
+            AudioCmd::None
         }
     }
 
@@ -92,6 +102,10 @@ impl Ball {
 
         let new_velocity = Point2::new(x_rand, y_rand);
         self.velocity = new_velocity * MAX_SPEED;
+    }
+
+    fn out_of_bounds(&self) -> bool {
+        self.rect.x < 0.0 || self.rect.x > FIELD_WIDTH
     }
 }
 
@@ -208,10 +222,11 @@ pub enum Status {
 }
 
 impl Game {
-    pub fn update(&mut self, cmd: MoveState) {
-        self.ball.update(&self.player, &self.computer);
+    pub fn update(&mut self, cmd: MoveState) -> AudioCmd {
+        let audio_cmd = self.ball.update(&self.player, &self.computer);
         self.player.update(cmd);
         self.computer.update(&self.ball);
+        audio_cmd
     }
 
     pub fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
@@ -232,7 +247,11 @@ impl Game {
     }
 
     pub fn reset(&mut self) {
-        self.ball.rect.move_to(Point2::new(1.0, 1.0));
+        let start_pos: Point2 = Point2::new(
+            FIELD_WIDTH * 0.4,
+            FIELD_HEIGHT * 0.4,
+        );
+        self.ball.rect.move_to(start_pos);
         self.ball.init_random_velocity();
     }
 }

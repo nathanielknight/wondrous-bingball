@@ -20,3 +20,31 @@ pub fn make_sounddata(ctx: &mut ggez::Context) -> ggez::GameResult<Sounds> {
         over: over_sound,
     })
 }
+
+pub struct AudioSystem {
+    sounds: Sounds,
+}
+
+pub enum AudioCmd {
+    None,
+    PlayBounce,
+    PlayOver,
+}
+
+impl AudioSystem {
+
+    pub fn create(ctx: &mut ggez::Context) -> ggez::GameResult<Self> {
+        let sounds = make_sounddata(ctx)?;
+        Ok(AudioSystem {
+            sounds: sounds,
+        })
+    }
+
+    pub fn handle_cmd(&self, cmd: AudioCmd) -> ggez::GameResult<()> {
+        match cmd {
+            AudioCmd::None => Ok(()),
+            AudioCmd::PlayBounce => self.sounds.bounce.play(),
+            AudioCmd::PlayOver => self.sounds.over.play(),
+        }
+    }
+}
