@@ -26,7 +26,7 @@ To share a build, you should build an optimized binary with
 
 this will put distributable binaries in `./target/release`.
 
-You may also have to distribute the SDL2 libary (as `SDL2.dll`
+You may also have to distribute the SDL2 library (as `SDL2.dll`
 or `SDL1.so`) along with the binary (the game may not run if
 the library isn't there in its directory). You can download
 that file [here](https://www.libsdl.org/download-2.0.php).
